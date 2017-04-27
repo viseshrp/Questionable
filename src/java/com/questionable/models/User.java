@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
 
-    private String user_id; //randomly generated number
+    private int id; //randomly generated number
     private String user_name; //username
     private String password; //password
     private String email; //email
@@ -22,7 +22,7 @@ public class User implements Serializable {
 
 
     public User() {
-        user_id = "";
+        id = 0;
         user_name = "";
         password = "";
         email = "";
@@ -30,8 +30,8 @@ public class User implements Serializable {
         reg_date = "";
     }
 
-    public User(String user_id, String user_name, String user_password, String email, String type, String reg_date) {
-        this.user_id = user_id;
+    public User(int user_id, String user_name, String user_password, String email, String type, String reg_date) {
+        this.id = user_id;
         this.user_name = user_name;
         this.password = user_password;
         this.email = email;
@@ -39,13 +39,13 @@ public class User implements Serializable {
         this.reg_date = reg_date;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public int getId() {
+        return id;
     }
 
     //TODO: write code to randomly generate later
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUser_name() {
