@@ -27,11 +27,11 @@ public class UserDB {
         PreparedStatement ps = null;
 
         String query
-                = "INSERT INTO user (user_id, user_name, password, email, type, reg_date) "
+                = "INSERT INTO user (id, user_name, password, email, type, reg_date) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
             ps = connection.prepareStatement(query);
-            ps.setString(1, user.getUser_id());
+            ps.setInt(1, user.getId());
             ps.setString(2, user.getUser_name());
             ps.setString(3, user.getPassword());
             ps.setString(4, user.getEmail());
@@ -60,8 +60,41 @@ public class UserDB {
             User user = null;
             if (rs.next()) {
                 user = new User();
-                //user_id, user_name, password, user_name, type, reg_date
-                user.setUser_id(rs.getString("user_id"));
+                //id, user_name, password, user_name, type, reg_date
+                user.setId(rs.getInt("id"));
+                user.setUser_name(rs.getString("user_name"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setType(rs.getString("type"));
+                user.setReg_date(rs.getString("reg_date"));
+            }
+            return user;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            DBUtil.closeResultSet(rs);
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+    }
+
+        public static User getUser(int id) throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT * FROM user "
+                + "WHERE id = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            User user = null;
+            if (rs.next()) {
+                user = new User();
+                //id, user_name, password, user_name, type, reg_date
+                user.setId(rs.getInt("id"));
                 user.setUser_name(rs.getString("user_name"));
                 user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
@@ -92,8 +125,8 @@ public class UserDB {
             ArrayList<User> users = new ArrayList<User>();
             while (rs.next()) {
                 User user = new User();
-                //user_id, user_name, password, email, type, reg_date
-                user.setUser_id(rs.getString("user_id"));
+                //id, user_name, password, email, type, reg_date
+                user.setId(rs.getInt("id"));
                 user.setUser_name(rs.getString("user_name"));
                 user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
