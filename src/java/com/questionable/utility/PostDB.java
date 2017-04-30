@@ -191,7 +191,7 @@ public class PostDB {
 
     }
 
-    public static int updatePost(String postId, Post post) throws IOException {
+    public static int updatePost(int post_id, Post post) throws IOException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
@@ -203,7 +203,7 @@ public class PostDB {
                 + "category_id = ?, "
                 + "created_date = ?, "
                 + "modified_date = ?, "
-                + "status = ?, "
+                + "status = ? "
                 + "WHERE id = ?";
 
         try {
@@ -216,7 +216,7 @@ public class PostDB {
             ps.setString(5, post.getCreated_date());
             ps.setString(6, post.getModified_date());
             ps.setString(7, post.getStatus());
-            ps.setString(8, postId);
+            ps.setInt(8, post_id);
             return ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);

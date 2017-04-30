@@ -54,6 +54,10 @@ public class PostController extends HttpServlet {
                 if (postId != null) {
                     Post post = PostDB.getPost(Integer.parseInt(postId));
                     request.setAttribute("post", post);
+
+                    //get all comments by postId
+                    ArrayList<Comment> comments = CommentDB.getCommentsByPost(post.getId());
+                    request.setAttribute("comments", comments);
                     url = "/viewpost.jsp";
                 } else {
                     ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
@@ -84,11 +88,17 @@ public class PostController extends HttpServlet {
                     DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                     String reportedDate = df.format(currDate);
 
-                    Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
+                    int post_id = Integer.parseInt(postId);
+                    Post post = PostDB.getPost(post_id); //get the reported post
+
+                    System.out.println("postid=" + post_id);
+                    System.out.println(post.getStatus());
 
                     post.setStatus("reported");
 
-                    PostDB.updatePost(postId, post);
+                    PostDB.updatePost(post_id, post);
+
+                    System.out.println(post.getStatus());
 
                     request.setAttribute("reported", "true");
                     url = "/home.jsp";
@@ -101,7 +111,7 @@ public class PostController extends HttpServlet {
                 url = "/login.jsp";
             }
         } else if (action.equalsIgnoreCase("moderate")) {
-            if (!user.getType().equals("admin")) {
+            if (user.getType().equals("admin")) {
                 ArrayList<Post> posts = PostDB.getPostsByStatus("reported");
                 request.setAttribute("posts", posts);
                 url = "/reportques.jsp";
@@ -110,15 +120,17 @@ public class PostController extends HttpServlet {
             }
         } else if (action.equalsIgnoreCase(
                 "approve")) {
-            if (!user.getType().equals("admin")) {
+            if (user.getType().equals("admin")) {
                 //get, change status and update db
                 String postId = request.getParameter("postId");
+                int post_id = Integer.parseInt(postId);
+
                 Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
 
                 //if admin approves report, it means post is invalid
                 post.setStatus("invalid");
 
-                PostDB.updatePost(postId, post);
+                PostDB.updatePost(post_id, post);
 
                 request.setAttribute("approved", "true");
 
@@ -130,15 +142,17 @@ public class PostController extends HttpServlet {
             }
         } else if (action.equalsIgnoreCase(
                 "disapprove")) {
-            if (!user.getType().equals("admin")) {
+            if (user.getType().equals("admin")) {
                 //get, change status and update db
                 String postId = request.getParameter("postId");
+                int post_id = Integer.parseInt(postId);
+
                 Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
 
                 //if admin approves report, it means post is invalid
                 post.setStatus("valid");
 
-                PostDB.updatePost(postId, post);
+                PostDB.updatePost(post_id, post);
 
                 request.setAttribute("disapproved", "true");
 
@@ -150,7 +164,7 @@ public class PostController extends HttpServlet {
             }
         } else if (action.equalsIgnoreCase(
                 "add-post")) {
-                url = "/addpost.jsp";
+            url = "/addpost.jsp";
         }/* else if (action.equalsIgnoreCase("update")) {
             if (user != null) {
 
@@ -208,10 +222,10 @@ public class PostController extends HttpServlet {
                 post.setCreated_date(createdDate);
                 post.setModified_date(createdDate);
                 post.setUser(user);
-                
-                if(CategoryDB.getCategoryByName(categ)!=null)
-                post.setCategory(CategoryDB.getCategoryByName(categ));
-                else {
+
+                if (CategoryDB.getCategoryByName(categ) != null) {
+                    post.setCategory(CategoryDB.getCategoryByName(categ));
+                } else {
                     Category category = new Category();
                     category.setName(categ);
                     category.setUser(user);
@@ -258,17 +272,17 @@ public class PostController extends HttpServlet {
             }
         } else if (action.equalsIgnoreCase(
                 "home")) {
-                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
-                request.setAttribute("posts", posts);
-                url = "/home.jsp";
+            ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+            request.setAttribute("posts", posts);
+            url = "/home.jsp";
         } else if (action.equalsIgnoreCase(
                 "myposts")) {
-                ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
-                request.setAttribute("posts", posts);
-                url = "/myposts.jsp";
+            ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
+            request.setAttribute("posts", posts);
+            url = "/myposts.jsp";
         } else if (action.equalsIgnoreCase(
                 "profile")) {
-                url = "/profile.jsp";
+            url = "/profile.jsp";
         }        // forward request and response objects to specified URL
 
         getServletContext()
