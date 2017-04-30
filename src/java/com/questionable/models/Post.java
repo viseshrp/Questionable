@@ -31,6 +31,7 @@ public class Post implements Serializable {
     private int id;
     private String question;
     private String content;
+    private String status;
     private String created_date;
     private String modified_date;
     
@@ -40,17 +41,17 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(int id, String question, String content, String created_date, String modified_date, User user, Category category) {
+    public Post(int id, String question, String content, String created_date, String modified_date, String status, User user, Category category) {
         this.id = id;
         this.question = question;
         this.content = content;
         this.created_date = created_date;
         this.modified_date = modified_date;
+        this.status = status;
         this.user = user;
         this.category = category;
     }
 
-    
     
     public int getId() {
         return id;
@@ -106,6 +107,14 @@ public class Post implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     
