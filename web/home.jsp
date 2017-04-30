@@ -1,6 +1,11 @@
 <%@ include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <c:choose>
+    <c:when test="${requestScope.reported != null}">
+        <div id="content">
+            <div class="alert alert-success" role=alert> <strong>Question Reported.</strong> The admin will review this to take action. </div>
+        </div>
+    </c:when>
     <c:when test="${sessionScope.theUser != null}">
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <c:forEach var="post" items="${posts}">
@@ -14,8 +19,8 @@
                         <p class="card-subtitle mb-2 text-muted"><small style="font-size:85%;"><strong>Created on ${post.created_date} &nbsp;--&nbsp; Modified on ${post.modified_date} &nbsp;by&nbsp; ${post.user.user_name}</strong></small></p>
                     </div>
                     <div class="panel-footer text-primary">
-                        &nbsp; <a href="#" class="card-link"><font color="black">Report</font></a>&nbsp;
-                        <a href="#" class="card-link"><font color="black">Comment</font></a></div>     
+                        &nbsp; <a href="PostController?action=report&AMP;postId=${post.id}" class="card-link"><font color="black">Report</font></a>&nbsp;
+                        <a href="PostController?action=comment&AMP;postId=${post.id}" class="card-link"><font color="black">Comment</font></a></div>     
 
                 </div>
             </div>
