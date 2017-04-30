@@ -46,21 +46,21 @@ public class UserDB {
         }
     }
 
-    public static User getUser(String user_name) throws IOException {
+    public static User getUser(String email) throws IOException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
         String query = "SELECT * FROM user "
-                + "WHERE user_name = ?";
+                + "WHERE email = ?";
         try {
             ps = connection.prepareStatement(query);
-            ps.setString(1, user_name);
+            ps.setString(1, email);
             rs = ps.executeQuery();
             User user = null;
             if (rs.next()) {
                 user = new User();
-                //id, user_name, password, user_name, type, reg_date
+                //id, email, password, email, type, reg_date
                 user.setId(rs.getInt("id"));
                 user.setUser_name(rs.getString("user_name"));
                 user.setPassword(rs.getString("password"));

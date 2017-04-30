@@ -26,8 +26,8 @@ public class PostDB {
         PreparedStatement ps = null;
 
         String query
-                = "INSERT INTO post (id, question, content, user_id, category_id, created_date, modified_date) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                = "INSERT INTO post (id, question, content, user_id, category_id, created_date, modified_date, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             ps = connection.prepareStatement(query);
             ps.setInt(1, post.getId());
@@ -37,6 +37,7 @@ public class PostDB {
             ps.setInt(5, post.getCategory().getId());
             ps.setString(6, post.getCreated_date());
             ps.setString(7, post.getModified_date());
+            ps.setString(8, post.getStatus());
             return ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -68,6 +69,7 @@ public class PostDB {
                 post.setCategory(CategoryDB.getCategory(rs.getInt("category_id")));
                 post.setCreated_date(rs.getString("created_date"));
                 post.setModified_date(rs.getString("modified_date"));
+                post.setStatus(rs.getString("status"));
             }
             return post;
         } catch (SQLException e) {
@@ -100,6 +102,7 @@ public class PostDB {
                 post.setCategory(CategoryDB.getCategory(rs.getInt("category_id")));
                 post.setCreated_date(rs.getString("created_date"));
                 post.setModified_date(rs.getString("modified_date"));
+                post.setStatus(rs.getString("status"));
                 posts.add(post);
             }
             return posts;
@@ -136,6 +139,7 @@ public class PostDB {
                 post.setCategory(CategoryDB.getCategory(rs.getInt("category_id")));
                 post.setCreated_date(rs.getString("created_date"));
                 post.setModified_date(rs.getString("modified_date"));
+                post.setStatus(rs.getString("status"));
                 posts.add(post);
             }
             return posts;
@@ -144,6 +148,80 @@ public class PostDB {
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+
+    }
+
+    public static ArrayList<Post> getPostsByStatus(String status) throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM post "
+                + "WHERE status = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setString(1, status);
+            rs = ps.executeQuery();
+            ArrayList<Post> posts = new ArrayList<>();
+            while (rs.next()) {
+                Post post = new Post();
+                post.setId(rs.getInt("id"));
+                post.setQuestion(rs.getString("question"));
+                post.setContent(rs.getString("content"));
+                post.setUser(UserDB.getUser(rs.getInt("user_id")));
+                post.setCategory(CategoryDB.getCategory(rs.getInt("category_id")));
+                post.setCreated_date(rs.getString("created_date"));
+                post.setModified_date(rs.getString("modified_date"));
+                post.setStatus(rs.getString("status"));
+                posts.add(post);
+            }
+            return posts;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            DBUtil.closeResultSet(rs);
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+
+    }
+
+    public static int updatePost(String postId, Post post) throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String query = "UPDATE post SET "
+                + "question = ?, "
+                + "content = ?, "
+                + "user_id = ?, "
+                + "category_id = ?, "
+                + "created_date = ?, "
+                + "modified_date = ?, "
+                + "status = ?, "
+                + "WHERE id = ?";
+
+        try {
+            ps = connection.prepareStatement(query);
+
+            ps.setString(1, post.getQuestion());
+            ps.setString(2, post.getContent());
+            ps.setInt(3, post.getUser().getId());
+            ps.setInt(4, post.getCategory().getId());
+            ps.setString(5, post.getCreated_date());
+            ps.setString(6, post.getModified_date());
+            ps.setString(7, post.getStatus());
+            ps.setString(8, postId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+            return 0;
+        } finally {
             DBUtil.closePreparedStatement(ps);
             pool.freeConnection(connection);
         }

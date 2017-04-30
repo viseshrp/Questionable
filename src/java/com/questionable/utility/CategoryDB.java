@@ -70,4 +70,33 @@ public class CategoryDB {
         }
     }
 
+        public static Category getCategoryByName(String name) throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT * FROM category "
+                + "WHERE name = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setString(1, name);
+            rs = ps.executeQuery();
+            Category category = null;
+            if (rs.next()) {
+                category = new Category();
+                category.setId(rs.getInt("id"));
+                category.setName(rs.getString("name"));
+                category.setUser(UserDB.getUser(rs.getInt("user_id")));
+            }
+            return category;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            DBUtil.closeResultSet(rs);
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+    }
+
 }
