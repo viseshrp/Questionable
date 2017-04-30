@@ -1,0 +1,292 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.questionable.controllers;
+
+import com.questionable.models.Category;
+import com.questionable.models.Comment;
+import com.questionable.models.Post;
+import com.questionable.models.User;
+import com.questionable.utility.CategoryDB;
+import com.questionable.utility.CommentDB;
+import com.questionable.utility.PostDB;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ *
+ * @author viseshprasad
+ */
+public class PostController extends HttpServlet {
+
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String url = "";
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("theUser");
+        // get current action
+        String action = request.getParameter("action");
+        if (action == null) {
+            url = "/home.jsp";
+        } else if (action.equalsIgnoreCase("viewpost")) {
+            if (user != null) {
+                String postId = request.getParameter("postId");
+                if (postId != null) {
+                    Post post = PostDB.getPost(Integer.parseInt(postId));
+                    request.setAttribute("post", post);
+                    url = "/viewpost.jsp";
+                } else {
+                    ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                    request.setAttribute("posts", posts);
+                    url = "/home.jsp";
+                }
+            } else {
+                url = "/login.jsp";
+            }
+        } //        else if (action.equalsIgnoreCase("edit")) {
+        //            if (user != null) {
+        //                String postId = request.getParameter("StudyCode");
+        //                if (postId != null) {
+        //                    Study study = StudyDB.getStudy(postId);
+        //                    request.setAttribute("study", study);
+        //                    url = "/editstudy.jsp";
+        //                }
+        //            } else {
+        //                url = "/login.jsp";
+        //            }
+        //        } 
+        else if (action.equalsIgnoreCase("report")) {
+            if (user != null) {
+                String postId = request.getParameter("postId");
+                //String question = request.getParameter("question");
+                if (postId != null) {
+                    Date currDate = new Date();
+                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                    String reportedDate = df.format(currDate);
+
+                    Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
+
+                    post.setStatus("reported");
+
+                    PostDB.updatePost(postId, post);
+
+                    request.setAttribute("reported", "true");
+                    url = "/home.jsp";
+                } else {
+                    ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                    request.setAttribute("posts", posts);
+                    url = "/home.jsp";
+                }
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase("moderate")) {
+            if (!user.getType().equals("admin")) {
+                ArrayList<Post> posts = PostDB.getPostsByStatus("reported");
+                request.setAttribute("posts", posts);
+                url = "/reportques.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase(
+                "approve")) {
+            if (!user.getType().equals("admin")) {
+                //get, change status and update db
+                String postId = request.getParameter("postId");
+                Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
+
+                //if admin approves report, it means post is invalid
+                post.setStatus("invalid");
+
+                PostDB.updatePost(postId, post);
+
+                request.setAttribute("approved", "true");
+
+                ArrayList<Post> posts = PostDB.getPostsByStatus("reported");
+                request.setAttribute("posts", posts);
+                url = "/reportques.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase(
+                "disapprove")) {
+            if (!user.getType().equals("admin")) {
+                //get, change status and update db
+                String postId = request.getParameter("postId");
+                Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
+
+                //if admin approves report, it means post is invalid
+                post.setStatus("valid");
+
+                PostDB.updatePost(postId, post);
+
+                request.setAttribute("disapproved", "true");
+
+                ArrayList<Post> posts = PostDB.getPostsByStatus("reported");
+                request.setAttribute("posts", posts);
+                url = "/reportques.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase(
+                "add-post")) {
+                url = "/addpost.jsp";
+        }/* else if (action.equalsIgnoreCase("update")) {
+            if (user != null) {
+
+                                String question = request.getParameter("question");
+                String questionDetails = request.getParameter("question_details");
+                String categ = request.getParameter("categ");
+
+                Date currDate = new Date();
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                String createdDate = df.format(currDate);
+
+                Post post = PostDB.get;
+                post.setQuestion(question);
+                post.setContent(questionDetails);
+                post.setStatus("valid");
+                post.setCreated_date(createdDate);
+                post.setModified_date(createdDate);
+                post.setUser(user);
+                post.setCategory(CategoryDB.getCategoryByName(categ));
+                
+                PostDB.addPost(post);
+
+                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                request.setAttribute("post", post);
+                url = "/home.jsp";
+
+                Study study = StudyDB.getStudy(postId);
+                study.setStudyCode(postId);
+                study.setStudyName(studyName);
+                study.setQuestion(question);
+                study.setNumOfParticipants(noOfParticipants);
+                study.setDescription(desc);
+                StudyDB.updateStudy(postId, study);
+                ArrayList<Study> studies = StudyDB.getStudies(user.getEmail());
+                request.setAttribute("study", studies);
+                url = "/studies.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        }*/ else if (action.equalsIgnoreCase(
+                "add")) {
+            if (user != null) {
+                String question = request.getParameter("question");
+                String questionDetails = request.getParameter("question_details");
+                String categ = request.getParameter("category");
+
+                Date currDate = new Date();
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                String createdDate = df.format(currDate);
+
+                Post post = new Post();
+                post.setQuestion(question);
+                post.setContent(questionDetails);
+                post.setStatus("valid");
+                post.setCreated_date(createdDate);
+                post.setModified_date(createdDate);
+                post.setUser(user);
+                
+                if(CategoryDB.getCategoryByName(categ)!=null)
+                post.setCategory(CategoryDB.getCategoryByName(categ));
+                else {
+                    Category category = new Category();
+                    category.setName(categ);
+                    category.setUser(user);
+                    CategoryDB.addCategory(category);
+                    post.setCategory(category);
+                }
+
+                PostDB.addPost(post);
+
+                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                request.setAttribute("posts", posts);
+                url = "/home.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase(
+                "comment")) {
+            if (user != null) {
+                String postId = request.getParameter("postId");
+                String content = request.getParameter("comment");
+
+                Post post = PostDB.getPost(Integer.parseInt(postId));
+                Date currDate = new Date();
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                String createdDate = df.format(currDate);
+
+                Comment comment = new Comment();
+                comment.setContent(content);
+                comment.setCreated_date(createdDate);
+                comment.setModified_date(createdDate);
+                comment.setUser(user); //check later
+                comment.setPost(post);
+                CommentDB.addComment(comment);
+
+                session.setAttribute("theUser", user);
+                request.setAttribute("post", post);
+
+                ArrayList<Comment> comments = CommentDB.getComments();
+                request.setAttribute("comments", comments);
+
+                url = "/participate.jsp";
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase(
+                "home")) {
+                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                request.setAttribute("posts", posts);
+                url = "/home.jsp";
+        } else if (action.equalsIgnoreCase(
+                "myposts")) {
+                ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
+                request.setAttribute("posts", posts);
+                url = "/myposts.jsp";
+        } else if (action.equalsIgnoreCase(
+                "profile")) {
+                url = "/profile.jsp";
+        }        // forward request and response objects to specified URL
+
+        getServletContext()
+                .getRequestDispatcher(url)
+                .forward(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}
