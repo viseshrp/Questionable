@@ -5,11 +5,14 @@
  */
 package com.questionable.controllers;
 
+import com.questionable.models.Post;
 import com.questionable.models.User;
+import com.questionable.utility.PostDB;
 import com.questionable.utility.UserDB;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -65,6 +68,9 @@ public class UserController extends HttpServlet {
                             loginUser.getReg_date());
                     session.setAttribute("theUser", userBean);
 
+                    ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                    request.setAttribute("posts", posts);
+
                     url = "/home.jsp";
                 } else {
                     request.setAttribute("msg", "Invalid password");
@@ -102,7 +108,7 @@ public class UserController extends HttpServlet {
                 url = "/signup.jsp";
             }
         } else if (action.equalsIgnoreCase("about")) {
-                url = "/about.jsp";
+            url = "/about.jsp";
         } else if (action.equalsIgnoreCase("logout")) {
             if (user != null) {
                 session.invalidate();
@@ -111,10 +117,10 @@ public class UserController extends HttpServlet {
                 url = "/home.jsp";
             }
         } else if (action.equalsIgnoreCase("contact")) {
-            
-                request.setAttribute("contacted", "true");
-                url = "/home.jsp";
-        } 
+
+            request.setAttribute("contacted", "true");
+            url = "/home.jsp";
+        }
         // forward request and response objects to specified URL
         getServletContext()
                 .getRequestDispatcher(url)
