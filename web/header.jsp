@@ -53,6 +53,11 @@
                                 </c:choose>
 
                                 <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="UserController?action=about">About Us</a></li>
+                                    <li><a href="UserController?action=start-contact">Contact Us</a></li>
+                                </ul>
+
+                                <ul class="nav navbar-nav navbar-right">
                                     <li><a href="UserController?action=logout">Log out</a></li>
                                 </ul>
                             </c:when>
