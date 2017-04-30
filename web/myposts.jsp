@@ -13,10 +13,6 @@
                         ${post.content}<br><br>
                         <p class="card-subtitle mb-2 text-muted"><small style="font-size:85%;"><strong>Created on ${post.created_date} &nbsp;--&nbsp; Modified on ${post.modified_date} &nbsp;by&nbsp; ${post.user.user_name}</strong></small></p>
                     </div>
-                    <div class="panel-footer text-primary">
-                        &nbsp; <a href="#" class="card-link"><font color="black">Report</font></a>&nbsp;
-                        <a href="#" class="card-link"><font color="black">Comment</font></a></div>     
-
                 </div>
             </div>
         </c:forEach>
