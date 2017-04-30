@@ -212,10 +212,13 @@ public class PostController extends HttpServlet {
                 if (CategoryDB.getCategoryByName(categ) != null) {
                     post.setCategory(CategoryDB.getCategoryByName(categ));
                 } else {
+                    
                     Category category = new Category();
                     category.setName(categ);
                     category.setUser(user);
                     CategoryDB.addCategory(category);
+                    System.out.println("category created successfully");
+                    category.setId(CategoryDB.getCategoryByName(categ).getId());
                     post.setCategory(category);
                 }
 
