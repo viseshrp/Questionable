@@ -28,25 +28,26 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="home.jsp">Questionable</a>
+                        <a class="navbar-brand" href="PostController?action=home">Questionable</a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
                         <c:choose>
                             <c:when test="${sessionScope.theUser != null}">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="">Home</a></li>
+                                    <li><a href="PostController?action=home">Home</a></li>
                                 </ul>
 
                                 <c:choose>
                                     <c:when test="${sessionScope.theUser.type == 'user' }">
                                         <ul class="nav navbar-nav">
-                                            <li><a href="">Profile</a></li>
-                                            <li><a href="">My Posts</a></li>
+                                            <li><a href="PostController?action=add-post">Ask a Question</a></li>
+                                            <li><a href="PostController?action=profile">Profile</a></li>
+                                            <li><a href="PostController?action=myposts">My Posts</a></li>
                                         </ul>
                                     </c:when>
                                     <c:otherwise>
                                         <ul class="nav navbar-nav">
-                                            <li><a href="UserController?action=moderate">Moderate</a></li>
+                                            <li><a href="PostController?action=moderate">Moderate</a></li>
                                         </ul>
                                     </c:otherwise>
                                 </c:choose>
@@ -57,10 +58,10 @@
                             </c:when>
                             <c:otherwise>
                                 <ul class="nav navbar-nav navbar-right">
-                                    <li><a href="login.jsp">Login</a></li>
-                                    <li><a href="signup.jsp">Signup</a></li>
-                                    <li><a href="about.jsp">About Us</a></li>
-                                    <li><a href="contact.jsp">Contact Us</a></li>
+                                    <li><a href="UserController?action=start-login">Login</a></li>
+                                    <li><a href="UserController?action=start-signup">Signup</a></li>
+                                    <li><a href="UserController?action=about">About Us</a></li>
+                                    <li><a href="UserController?action=start-contact">Contact Us</a></li>
                                 </ul>
                             </c:otherwise>
                         </c:choose>
