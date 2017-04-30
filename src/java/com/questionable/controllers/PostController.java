@@ -67,19 +67,18 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
-        } //        else if (action.equalsIgnoreCase("edit")) {
-        //            if (user != null) {
-        //                String postId = request.getParameter("StudyCode");
-        //                if (postId != null) {
-        //                    Study study = StudyDB.getStudy(postId);
-        //                    request.setAttribute("study", study);
-        //                    url = "/editstudy.jsp";
-        //                }
-        //            } else {
-        //                url = "/login.jsp";
-        //            }
-        //        } 
-        else if (action.equalsIgnoreCase("report")) {
+        } else if (action.equalsIgnoreCase("edit")) {
+            if (user != null) {
+                String postId = request.getParameter("postId");
+                if (postId != null) {
+                    Post post = PostDB.getPost(Integer.parseInt(postId));
+                    request.setAttribute("post", post);
+                    url = "/editpost.jsp";
+                }
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase("report")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
                 //String question = request.getParameter("question");
@@ -165,46 +164,33 @@ public class PostController extends HttpServlet {
         } else if (action.equalsIgnoreCase(
                 "add-post")) {
             url = "/addpost.jsp";
-        }/* else if (action.equalsIgnoreCase("update")) {
+        } else if (action.equalsIgnoreCase("update")) {
             if (user != null) {
-
-                                String question = request.getParameter("question");
+                                String postId = request.getParameter("postId");
+                String question = request.getParameter("question");
                 String questionDetails = request.getParameter("question_details");
-                String categ = request.getParameter("categ");
 
                 Date currDate = new Date();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                 String createdDate = df.format(currDate);
 
-                Post post = PostDB.get;
+                int post_id = Integer.parseInt(postId);
+                Post post = PostDB.getPost(post_id);
                 post.setQuestion(question);
                 post.setContent(questionDetails);
-                post.setStatus("valid");
-                post.setCreated_date(createdDate);
                 post.setModified_date(createdDate);
                 post.setUser(user);
-                post.setCategory(CategoryDB.getCategoryByName(categ));
-                
-                PostDB.addPost(post);
 
-                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
-                request.setAttribute("post", post);
-                url = "/home.jsp";
+                PostDB.updatePost(post_id, post);
 
-                Study study = StudyDB.getStudy(postId);
-                study.setStudyCode(postId);
-                study.setStudyName(studyName);
-                study.setQuestion(question);
-                study.setNumOfParticipants(noOfParticipants);
-                study.setDescription(desc);
-                StudyDB.updateStudy(postId, study);
-                ArrayList<Study> studies = StudyDB.getStudies(user.getEmail());
-                request.setAttribute("study", studies);
-                url = "/studies.jsp";
+                ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
+                request.setAttribute("posts", posts);
+                url = "/myposts.jsp";
+
             } else {
                 url = "/login.jsp";
             }
-        }*/ else if (action.equalsIgnoreCase(
+        } else if (action.equalsIgnoreCase(
                 "add")) {
             if (user != null) {
                 String question = request.getParameter("question");
@@ -265,8 +251,8 @@ public class PostController extends HttpServlet {
 
                 ArrayList<Comment> comments = CommentDB.getCommentsByPost(post.getId());;
                 request.setAttribute("comments", comments);
-                
-                    url = "/viewpost.jsp";
+
+                url = "/viewpost.jsp";
             } else {
                 url = "/login.jsp";
             }
