@@ -20,7 +20,7 @@
                     </div>
                     <div class="panel-footer text-primary">
                         &nbsp; <a href="PostController?action=report&AMP;postId=${post.id}" class="card-link"><font color="black">Report</font></a>&nbsp;
-                        <a href="PostController?action=comment&AMP;postId=${post.id}" class="card-link"><font color="black">Comment</font></a></div>     
+                        <a href="PostController?action=viewpost&AMP;postId=${post.id}" class="card-link"><font color="black">Comment</font></a></div>     
 
                 </div>
             </div>

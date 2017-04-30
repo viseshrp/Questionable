@@ -265,8 +265,8 @@ public class PostController extends HttpServlet {
 
                 ArrayList<Comment> comments = CommentDB.getComments();
                 request.setAttribute("comments", comments);
-
-                url = "/participate.jsp";
+                
+                    url = "/viewpost.jsp";
             } else {
                 url = "/login.jsp";
             }

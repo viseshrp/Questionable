@@ -34,7 +34,12 @@
                 </div>
             </div>
         </div>
-        <div class="panel-footer text-primary">
+        <form class="form-signin" action="PostController?action=comment&AMP;postId=${post.id}" method="post">
+        <input type="hidden" name="action" value="comment" />
+        <label for="exampleTextarea" class="sr-only">Comment</label>
+        <textarea name="comment" class="form-control" id="exampleTextarea" rows="3" placeholder="Comment" maxlength="300" required=""></textarea>        <br>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+        <h1 align="center">${requestScope.msg}</h1>
 
         </div>
     </div>
