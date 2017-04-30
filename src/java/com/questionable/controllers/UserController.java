@@ -52,8 +52,6 @@ public class UserController extends HttpServlet {
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
-            
-            
             User loginUser = UserDB.getUser(email);
             if (loginUser != null) {
                 String pass = loginUser.getPassword();

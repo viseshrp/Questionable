@@ -263,7 +263,7 @@ public class PostController extends HttpServlet {
                 session.setAttribute("theUser", user);
                 request.setAttribute("post", post);
 
-                ArrayList<Comment> comments = CommentDB.getComments();
+                ArrayList<Comment> comments = CommentDB.getCommentsByPost(post.getId());;
                 request.setAttribute("comments", comments);
                 
                     url = "/viewpost.jsp";
