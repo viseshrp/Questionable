@@ -166,7 +166,7 @@ public class PostController extends HttpServlet {
             url = "/addpost.jsp";
         } else if (action.equalsIgnoreCase("update")) {
             if (user != null) {
-                                String postId = request.getParameter("postId");
+                String postId = request.getParameter("postId");
                 String question = request.getParameter("question");
                 String questionDetails = request.getParameter("question_details");
 
@@ -184,6 +184,23 @@ public class PostController extends HttpServlet {
                 PostDB.updatePost(post_id, post);
 
                 ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
+                request.setAttribute("posts", posts);
+                url = "/myposts.jsp";
+
+            } else {
+                url = "/login.jsp";
+            }
+        } else if (action.equalsIgnoreCase("delete")) {
+            if (user != null) {
+                String postId = request.getParameter("postId");
+
+                int post_id = Integer.parseInt(postId);
+                Post post = PostDB.getPost(post_id);
+
+                PostDB.deletePost(post_id);
+
+                ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
+                request.setAttribute("deleted", "true");
                 request.setAttribute("posts", posts);
                 url = "/myposts.jsp";
 
@@ -212,7 +229,7 @@ public class PostController extends HttpServlet {
                 if (CategoryDB.getCategoryByName(categ) != null) {
                     post.setCategory(CategoryDB.getCategoryByName(categ));
                 } else {
-                    
+
                     Category category = new Category();
                     category.setName(categ);
                     category.setUser(user);

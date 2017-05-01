@@ -1,7 +1,15 @@
 <%@ include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-        <div class="row-fluid">
-            <div class="span12">
+<div id="content">
+    <c:if test="${requestScope.deleted == 'true' }">
+        <div class="alert alert-success" role="alert">
+            <strong>Post Removed.</strong>
+        </div>
+    </c:if>
+</div>
+
+<div class="row-fluid">
+    <div class="span12">
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <c:forEach var="post" items="${posts}">
             <div id="content">
@@ -13,14 +21,17 @@
                         ${post.content}<br><br>
                         <p class="card-subtitle mb-2 text-muted"><small style="font-size:85%;"><strong>Created on ${post.created_date} &nbsp;--&nbsp; Modified on ${post.modified_date} &nbsp;by&nbsp; ${post.user.user_name}</strong></small></p>
                     </div>
-                                        <div class="panel-footer text-primary">
+                    <div class="panel-footer text-primary">
                         &nbsp; <a href="PostController?action=report&AMP;postId=${post.id}" class="card-link"><font color="black">Report</font></a>&nbsp;
                         <a href="PostController?action=viewpost&AMP;postId=${post.id}" class="card-link"><font color="black">Comment</font></a>
                         &nbsp;
-                        <a href="PostController?action=edit&AMP;postId=${post.id}" class="card-link"><font color="black">Edit</font></a></div>
+                        <a href="PostController?action=edit&AMP;postId=${post.id}" class="card-link"><font color="black">Edit</font></a>
+                        &nbsp;
+                        <a href="PostController?action=delete&AMP;postId=${post.id}" class="card-link"><font color="red">Delete</font></a>
+                    </div>
 
                 </div>
             </div>
         </c:forEach>
-            </div>
-        </div> 
+    </div>
+</div> 

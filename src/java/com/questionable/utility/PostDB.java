@@ -228,4 +228,27 @@ public class PostDB {
 
     }
 
+        public static int deletePost(int post_id) throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        //DELETE FROM post WHERE id = 22;
+        String query = "DELETE FROM post "
+                + "WHERE id = ?";
+
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setInt(1, post_id);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+            return 0;
+        } finally {
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+
+    }
+
 }
