@@ -142,7 +142,7 @@ public class UserController extends HttpServlet {
                 }
             }
             request.setAttribute("contacted", "true");
-            url = "/home.jsp";
+            url = "/contact.jsp";
         }
         // forward request and response objects to specified URL
         getServletContext()
