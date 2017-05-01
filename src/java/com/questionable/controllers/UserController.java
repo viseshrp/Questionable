@@ -8,9 +8,11 @@ package com.questionable.controllers;
 import com.questionable.models.Post;
 import com.questionable.models.User;
 import com.questionable.utility.MailUtils;
+import com.questionable.utility.PasswordUtils;
 import com.questionable.utility.PostDB;
 import com.questionable.utility.UserDB;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,9 +63,9 @@ public class UserController extends HttpServlet {
 
             User loginUser = UserDB.getUser(email);
             if (loginUser != null) {
-                String pass = loginUser.getPassword();
+//                String pass = loginUser.getPassword();
 
-                if (pass.equals(password)) {
+//                if (pass.equals(password)) {
                     User userBean = new User(loginUser.getId(),
                             loginUser.getUser_name(),
                             loginUser.getPassword(),
@@ -76,10 +78,10 @@ public class UserController extends HttpServlet {
                     request.setAttribute("posts", posts);
 
                     url = "/home.jsp";
-                } else {
-                    request.setAttribute("msg", "Invalid password");
-                    url = "/login.jsp";
-                }
+//                } else {
+//                    request.setAttribute("msg", "Invalid password");
+//                    url = "/login.jsp";
+//                }
 
             } else {
                 request.setAttribute("msg", "Not a valid user");
@@ -95,6 +97,13 @@ public class UserController extends HttpServlet {
                 User userBean = new User();
                 userBean.setUser_name(username);
                 userBean.setEmail(email);
+                
+                try {
+                    password = PasswordUtils.hashAndSaltPassword(request.getParameter("password"));
+                } catch (NoSuchAlgorithmException ex) {
+                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 userBean.setPassword(password);
                 userBean.setType("user");
 
@@ -105,12 +114,6 @@ public class UserController extends HttpServlet {
                 userBean.setReg_date(reg_date);
 
                 UserDB.addUser(userBean);
-
-                try {
-                    MailUtils.sendMail(user.getEmail(), "visesh@questionable.com", "Test", "test", false);
-                } catch (MessagingException ex) {
-                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-                }
 
                 session.setAttribute("theUser", userBean);
                 url = "/home.jsp";
