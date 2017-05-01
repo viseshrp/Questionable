@@ -7,6 +7,7 @@ package com.questionable.controllers;
 
 import com.questionable.models.Post;
 import com.questionable.models.User;
+import com.questionable.utility.MailUtils;
 import com.questionable.utility.PostDB;
 import com.questionable.utility.UserDB;
 import java.io.IOException;
@@ -14,6 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -101,6 +105,13 @@ public class UserController extends HttpServlet {
                 userBean.setReg_date(reg_date);
 
                 UserDB.addUser(userBean);
+
+                try {
+                    MailUtils.sendMail(user.getEmail(), "visesh@questionable.com", "Test", "test", false);
+                } catch (MessagingException ex) {
+                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 session.setAttribute("theUser", userBean);
                 url = "/home.jsp";
             } else {
@@ -118,6 +129,18 @@ public class UserController extends HttpServlet {
             }
         } else if (action.equalsIgnoreCase("contact")) {
 
+            ArrayList<String> adminEmails = UserDB.getAdminEmail();
+
+            System.out.println("emails: " + adminEmails.toString());
+            for (String email : adminEmails) {
+                try {
+                    System.out.println("useremail: " + user.getEmail());
+                    System.out.println("admin: " + email);
+                    MailUtils.sendMail(email, user.getEmail(), "Feedback from " + request.getParameter("email"), request.getParameter("message"), false);
+                } catch (MessagingException ex) {
+                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             request.setAttribute("contacted", "true");
             url = "/home.jsp";
         }

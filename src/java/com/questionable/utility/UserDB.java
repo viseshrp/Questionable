@@ -78,6 +78,33 @@ public class UserDB {
             pool.freeConnection(connection);
         }
     }
+    
+        public static ArrayList<String> getAdminEmail() throws IOException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT email FROM user "
+                + "WHERE type = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setString(1, "admin");
+            rs = ps.executeQuery();
+            ArrayList<String> emails = new ArrayList<>();
+            while (rs.next()) {
+                String email = rs.getString("email");
+                emails.add(email);
+            }
+            return emails;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            DBUtil.closeResultSet(rs);
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+    }
 
         public static User getUser(int id) throws IOException {
         ConnectionPool pool = ConnectionPool.getInstance();

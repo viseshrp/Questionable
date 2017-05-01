@@ -4,7 +4,7 @@
 <%--Code to signup form --%>
 <div class="container">
 
-    <<c:if test="${requestScope.contacted == 'true' }">
+    <c:if test="${requestScope.contacted == 'true' }">
         <div class="alert alert-success" role="alert">
         <strong>Sent!</strong> We'll get back to you soon :)
       </div>
