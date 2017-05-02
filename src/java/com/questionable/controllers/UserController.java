@@ -145,13 +145,10 @@ public class UserController extends HttpServlet {
 
             ArrayList<String> adminEmails = UserDB.getAdminEmail();
 
-            System.out.println("emails: " + adminEmails.toString());
             for (String email : adminEmails) {
                 try {
-                    System.out.println("useremail: " + user.getEmail());
-                    System.out.println("admin: " + email);
                     //Email functionality.
-                    MailUtils.sendMail(email, user.getEmail(), "Feedback from " + request.getParameter("email"), request.getParameter("message"), false);
+                    MailUtils.sendMail(email, request.getParameter("email"), "Feedback from " + request.getParameter("email"), request.getParameter("message"), false);
                 } catch (MessagingException ex) {
                     Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
                 }
