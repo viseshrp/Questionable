@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ *Class to control flow of posting, editing, deleting, reporting and commenting
  * @author viseshprasad
  */
 public class PostController extends HttpServlet {
@@ -46,8 +46,12 @@ public class PostController extends HttpServlet {
         User user = (User) session.getAttribute("theUser");
         // get current action
         String action = request.getParameter("action");
+        
+        //Check if user is in session
         if (action == null) {
             url = "/home.jsp";
+            
+            //action of viewing a post in a separate screen
         } else if (action.equalsIgnoreCase("viewpost")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
@@ -55,11 +59,12 @@ public class PostController extends HttpServlet {
                     Post post = PostDB.getPost(Integer.parseInt(postId));
                     request.setAttribute("post", post);
 
-                    //get all comments by postId
+                    //get all comments by postId to display
                     ArrayList<Comment> comments = CommentDB.getCommentsByPost(post.getId());
                     request.setAttribute("comments", comments);
                     url = "/viewpost.jsp";
                 } else {
+                    //only display valid posts on homepage
                     ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
                     request.setAttribute("posts", posts);
                     url = "/home.jsp";
@@ -67,6 +72,7 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //edit action for posts
         } else if (action.equalsIgnoreCase("edit")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
@@ -78,6 +84,7 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //report action for posts
         } else if (action.equalsIgnoreCase("report")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
@@ -109,6 +116,7 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //admin review page
         } else if (action.equalsIgnoreCase("moderate")) {
             if (user.getType().equals("admin")) {
                 ArrayList<Post> posts = PostDB.getPostsByStatus("reported");
@@ -117,6 +125,7 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //admin approve action
         } else if (action.equalsIgnoreCase(
                 "approve")) {
             if (user.getType().equals("admin")) {
@@ -139,6 +148,7 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //admin disapprove/reject action
         } else if (action.equalsIgnoreCase(
                 "disapprove")) {
             if (user.getType().equals("admin")) {
@@ -148,7 +158,7 @@ public class PostController extends HttpServlet {
 
                 Post post = PostDB.getPost(Integer.parseInt(postId)); //get the reported post
 
-                //if admin approves report, it means post is invalid
+                //if admin approves report, it means post is valid
                 post.setStatus("valid");
 
                 PostDB.updatePost(post_id, post);
@@ -164,6 +174,8 @@ public class PostController extends HttpServlet {
         } else if (action.equalsIgnoreCase(
                 "add-post")) {
             url = "/addpost.jsp";
+            
+            //edit option to update posts
         } else if (action.equalsIgnoreCase("update")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
@@ -190,6 +202,8 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            
+            //delete option for posts
         } else if (action.equalsIgnoreCase("delete")) {
             if (user != null) {
                 String postId = request.getParameter("postId");
@@ -207,6 +221,8 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            
+            //adding a post
         } else if (action.equalsIgnoreCase(
                 "add")) {
             if (user != null) {
@@ -226,6 +242,7 @@ public class PostController extends HttpServlet {
                 post.setModified_date(createdDate);
                 post.setUser(user);
 
+                //check if category already exists, or else create one.
                 if (CategoryDB.getCategoryByName(categ) != null) {
                     post.setCategory(CategoryDB.getCategoryByName(categ));
                 } else {
@@ -247,6 +264,8 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            
+            // commenting action
         } else if (action.equalsIgnoreCase(
                 "comment")) {
             if (user != null) {
@@ -276,16 +295,19 @@ public class PostController extends HttpServlet {
             } else {
                 url = "/login.jsp";
             }
+            //goto home page
         } else if (action.equalsIgnoreCase(
                 "home")) {
             ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
             request.setAttribute("posts", posts);
             url = "/home.jsp";
+            //display all my posts
         } else if (action.equalsIgnoreCase(
                 "myposts")) {
             ArrayList<Post> posts = PostDB.getPostsByUser(user.getId());
             request.setAttribute("posts", posts);
             url = "/myposts.jsp";
+            //display my profile
         } else if (action.equalsIgnoreCase(
                 "profile")) {
             url = "/profile.jsp";

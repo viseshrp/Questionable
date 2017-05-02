@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ *Controller to manage user flow like signup, signin, contact-us, etc.
  *
  * @author viseshprasad
  */
@@ -49,23 +50,24 @@ public class UserController extends HttpServlet {
         // get current action
         String action = request.getParameter("action");
         User user = (User) session.getAttribute("theUser");
+        
+        //Check if user is logged in.
         if (action == null) {
             url = "/home.jsp";    // the "main" page
-        } else if (action.equalsIgnoreCase("start-login")) {
+        } else if (action.equalsIgnoreCase("start-login")) { //start login process
             url = "/login.jsp";
-        } else if (action.equalsIgnoreCase("start-signup")) {
+        } else if (action.equalsIgnoreCase("start-signup")) { //start signup process
             url = "/signup.jsp";
-        } else if (action.equalsIgnoreCase("start-contact")) {
+        } else if (action.equalsIgnoreCase("start-contact")) { //start contact process
             url = "/contact.jsp";
-        } else if (action.equalsIgnoreCase("login")) {
+        } else if (action.equalsIgnoreCase("login")) { //attempt login
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
+            //get user, set him to session and redirect him to
+            //the home page.
             User loginUser = UserDB.getUser(email);
             if (loginUser != null) {
-//                String pass = loginUser.getPassword();
-
-//                if (pass.equals(password)) {
                     User userBean = new User(loginUser.getId(),
                             loginUser.getUser_name(),
                             loginUser.getPassword(),
@@ -78,26 +80,26 @@ public class UserController extends HttpServlet {
                     request.setAttribute("posts", posts);
 
                     url = "/home.jsp";
-//                } else {
-//                    request.setAttribute("msg", "Invalid password");
-//                    url = "/login.jsp";
-//                }
 
             } else {
                 request.setAttribute("msg", "Not a valid user");
                 url = "/login.jsp";
             }
+            //user signup flow
         } else if (action.equalsIgnoreCase("create")) {
             String username = request.getParameter("username");
             String email = request.getParameter("email");
             String type = "user";
             String password = request.getParameter("password");
             String confirmPassword = request.getParameter("confirm_password");
+            
+            //Validation
             if (username != null && email != null && password != null && confirmPassword != null && password.equals(confirmPassword)) {
                 User userBean = new User();
                 userBean.setUser_name(username);
                 userBean.setEmail(email);
                 
+                //Password salting and hashing
                 try {
                     password = PasswordUtils.hashAndSaltPassword(request.getParameter("password"));
                 } catch (NoSuchAlgorithmException ex) {
@@ -130,8 +132,13 @@ public class UserController extends HttpServlet {
             } else {
                 url = "/home.jsp";
             }
+            
+            /*
+            Contact Us option with email functionality.
+            Send an email to all the admins.
+            */
         } else if (action.equalsIgnoreCase("contact")) {
-
+            
             ArrayList<String> adminEmails = UserDB.getAdminEmail();
 
             System.out.println("emails: " + adminEmails.toString());
@@ -139,6 +146,7 @@ public class UserController extends HttpServlet {
                 try {
                     System.out.println("useremail: " + user.getEmail());
                     System.out.println("admin: " + email);
+                    //Email functionality.
                     MailUtils.sendMail(email, user.getEmail(), "Feedback from " + request.getParameter("email"), request.getParameter("message"), false);
                 } catch (MessagingException ex) {
                     Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);

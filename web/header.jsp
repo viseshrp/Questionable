@@ -47,7 +47,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <ul class="nav navbar-nav">
-                                            <li><a href="PostController?action=moderate">Moderate</a></li>
+                                            <li><a href="PostController?action=moderate">Review Reports</a></li>
                                         </ul>
                                     </c:otherwise>
                                 </c:choose>
