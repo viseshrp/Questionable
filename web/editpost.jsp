@@ -1,4 +1,4 @@
-<%-- Include tag is used to import header page --%>
+<!--Edit Post View to edit posts-->
 <%@include file="header.jsp" %>
 
 <%--Code to signup form --%>

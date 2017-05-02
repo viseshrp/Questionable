@@ -1,3 +1,4 @@
+<!--User posts list view-->
 <%@ include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div id="content">

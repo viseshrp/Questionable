@@ -1,3 +1,6 @@
+<!--About Us View to explain the site
+Content References : www.quora.com
+-->
 <%@ include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="container">

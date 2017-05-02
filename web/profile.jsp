@@ -1,6 +1,6 @@
 <%-- Include tag is used to import header page --%>
 <%@include file="header.jsp" %>
-
+<!--User profile View-->
     <div id="content">
         <div class="container">
             <h1>Profile</h1><br>

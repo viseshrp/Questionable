@@ -1,3 +1,4 @@
+<!--Homepage or Newsfeed view-->
 <%@ include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!--Check if there was a reporting action in the flow-->

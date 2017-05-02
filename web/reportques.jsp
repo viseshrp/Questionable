@@ -2,6 +2,7 @@
     Document   : reportques
     Created on : Feb 23, 2017, 1:46:21 PM
     Author     : viseshprasad
+Admin interface for reported questions view.
 --%>
 <%-- Include tag is used to import header page --%>
 <%@ include file="header.jsp" %>
