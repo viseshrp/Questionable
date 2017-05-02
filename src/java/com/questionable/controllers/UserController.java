@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *Controller to manage user flow like signup, signin, contact-us, etc.
+ * Controller to manage user flow like signup, signin, contact-us, etc.
  *
  * @author viseshprasad
  */
@@ -50,7 +50,7 @@ public class UserController extends HttpServlet {
         // get current action
         String action = request.getParameter("action");
         User user = (User) session.getAttribute("theUser");
-        
+
         //Check if user is logged in.
         if (action == null) {
             url = "/home.jsp";    // the "main" page
@@ -68,18 +68,18 @@ public class UserController extends HttpServlet {
             //the home page.
             User loginUser = UserDB.getUser(email);
             if (loginUser != null) {
-                    User userBean = new User(loginUser.getId(),
-                            loginUser.getUser_name(),
-                            loginUser.getPassword(),
-                            loginUser.getEmail(),
-                            loginUser.getType(),
-                            loginUser.getReg_date());
-                    session.setAttribute("theUser", userBean);
+                User userBean = new User(loginUser.getId(),
+                        loginUser.getUser_name(),
+                        loginUser.getPassword(),
+                        loginUser.getEmail(),
+                        loginUser.getType(),
+                        loginUser.getReg_date());
+                session.setAttribute("theUser", userBean);
 
-                    ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
-                    request.setAttribute("posts", posts);
+                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                request.setAttribute("posts", posts);
 
-                    url = "/home.jsp";
+                url = "/home.jsp";
 
             } else {
                 request.setAttribute("msg", "Not a valid user");
@@ -92,20 +92,20 @@ public class UserController extends HttpServlet {
             String type = "user";
             String password = request.getParameter("password");
             String confirmPassword = request.getParameter("confirm_password");
-            
+
             //Validation
             if (username != null && email != null && password != null && confirmPassword != null && password.equals(confirmPassword)) {
                 User userBean = new User();
                 userBean.setUser_name(username);
                 userBean.setEmail(email);
-                
+
                 //Password salting and hashing
                 try {
                     password = PasswordUtils.hashAndSaltPassword(request.getParameter("password"));
                 } catch (NoSuchAlgorithmException ex) {
                     Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
                 userBean.setPassword(password);
                 userBean.setType("user");
 
@@ -118,6 +118,10 @@ public class UserController extends HttpServlet {
                 UserDB.addUser(userBean);
 
                 session.setAttribute("theUser", userBean);
+
+                ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
+                request.setAttribute("posts", posts);
+
                 url = "/home.jsp";
             } else {
                 request.setAttribute("msg", "Cannot create the account");
@@ -132,13 +136,13 @@ public class UserController extends HttpServlet {
             } else {
                 url = "/home.jsp";
             }
-            
+
             /*
             Contact Us option with email functionality.
             Send an email to all the admins.
-            */
+             */
         } else if (action.equalsIgnoreCase("contact")) {
-            
+
             ArrayList<String> adminEmails = UserDB.getAdminEmail();
 
             System.out.println("emails: " + adminEmails.toString());

@@ -252,7 +252,7 @@ public class PostController extends HttpServlet {
                     category.setUser(user);
                     CategoryDB.addCategory(category);
                     System.out.println("category created successfully");
-                    category.setId(CategoryDB.getCategoryByName(categ).getId());
+                    category.setId(CategoryDB.getCategoryByName(category.getName()).getId());
                     post.setCategory(category);
                 }
 
