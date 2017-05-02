@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,14 +23,17 @@ import java.util.ArrayList;
 public class PostDB {
 
     public static int addPost(Post post) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
+        Connection connection = null;
 
         String query
                 = "INSERT INTO post (id, question, content, user_id, category_id, created_date, modified_date, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setInt(1, post.getId());
             ps.setString(2, post.getQuestion());
@@ -38,23 +43,33 @@ public class PostDB {
             ps.setString(6, post.getCreated_date());
             ps.setString(7, post.getModified_date());
             ps.setString(8, post.getStatus());
+
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
         } finally {
             DBUtil.closePreparedStatement(ps);
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
     public static Post getPost(int id) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
         String query = "SELECT * FROM post "
                 + "WHERE id = ?";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setInt(1, id);
             rs = ps.executeQuery();
@@ -72,24 +87,33 @@ public class PostDB {
                 post.setStatus(rs.getString("status"));
             }
             return post;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            //pool.freeConnection(connection);
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
     public static ArrayList<Post> getPosts() throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
 
         String query = "SELECT * FROM post";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             rs = ps.executeQuery();
             ArrayList<Post> posts = new ArrayList<>();
@@ -106,26 +130,35 @@ public class PostDB {
                 posts.add(post);
             }
             return posts;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
 
     public static ArrayList<Post> getPostsByUser(int user_id) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
 
         String query = "SELECT * FROM post "
                 + "WHERE user_id = ?";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setInt(1, user_id);
             rs = ps.executeQuery();
@@ -143,26 +176,35 @@ public class PostDB {
                 posts.add(post);
             }
             return posts;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
 
     public static ArrayList<Post> getPostsByStatus(String status) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
 
         String query = "SELECT * FROM post "
                 + "WHERE status = ?";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setString(1, status);
             rs = ps.executeQuery();
@@ -179,23 +221,30 @@ public class PostDB {
                 post.setStatus(rs.getString("status"));
                 posts.add(post);
             }
+            connection.close();
             return posts;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
 
     public static int updatePost(int post_id, Post post) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
-
+        Connection connection = null;
         String query = "UPDATE post SET "
                 + "question = ?, "
                 + "content = ?, "
@@ -207,6 +256,8 @@ public class PostDB {
                 + "WHERE id = ?";
 
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
 
             ps.setString(1, post.getQuestion());
@@ -217,36 +268,51 @@ public class PostDB {
             ps.setString(6, post.getModified_date());
             ps.setString(7, post.getStatus());
             ps.setInt(8, post_id);
+
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
         } finally {
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
 
-        public static int deletePost(int post_id) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+    public static int deletePost(int post_id) throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
-
+        Connection connection = null;
         //DELETE FROM post WHERE id = 22;
         String query = "DELETE FROM post "
                 + "WHERE id = ?";
 
         try {
+            connection = ConnectionPool.getConnection();
             ps = connection.prepareStatement(query);
             ps.setInt(1, post_id);
+
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
         } finally {
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PostDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }

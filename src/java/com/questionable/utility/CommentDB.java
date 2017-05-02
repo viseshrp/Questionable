@@ -14,22 +14,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author viseshprasad
  */
 public class CommentDB {
-    
-        public static int addComment(Comment comment) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
-        PreparedStatement ps = null;
 
+    public static int addComment(Comment comment) throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        Connection connection = null;
         String query
                 = "INSERT INTO comment (id, content, user_id, post_id, created_date, modified_date) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setInt(1, comment.getId());
             ps.setString(2, comment.getContent());
@@ -37,23 +41,31 @@ public class CommentDB {
             ps.setInt(4, comment.getPost().getId());
             ps.setString(5, comment.getCreated_date());
             ps.setString(6, comment.getModified_date());
+
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
         } finally {
             DBUtil.closePreparedStatement(ps);
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CommentDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
     public static ArrayList<Comment> getComments() throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        Connection connection = null;
         String query = "SELECT * FROM comment";
         try {
+            connection = ConnectionPool.getConnection();
             ps = connection.prepareStatement(query);
             rs = ps.executeQuery();
             ArrayList<Comment> comments = new ArrayList<>();
@@ -68,25 +80,33 @@ public class CommentDB {
                 comments.add(comment);
             }
             return comments;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CommentDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
-        public static ArrayList<Comment> getCommentsByPost(int post_id) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+    public static ArrayList<Comment> getCommentsByPost(int post_id) throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
 
         String query = "SELECT * FROM comment "
                 + "WHERE post_id = ?";
         try {
+            connection = ConnectionPool.getConnection();
             ps = connection.prepareStatement(query);
             ps.setInt(1, post_id);
             rs = ps.executeQuery();
@@ -102,16 +122,21 @@ public class CommentDB {
                 comments.add(comment);
             }
             return comments;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CommentDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
-
 
 }

@@ -4,17 +4,18 @@
  * and open the template in the editor.
  */
 package com.questionable.utility;
+
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
- *
+ * Class used to create and use a connection.
  * @author viseshprasad
  */
-
 public class ConnectionPool {
 
     private static ConnectionPool pool = null;
@@ -36,14 +37,14 @@ public class ConnectionPool {
         return pool;
     }
 
-    public Connection getConnection() {
-        try {
-            return dataSource.getConnection();
-        } catch (SQLException e) {
-            System.out.println(e);
-            return null;
-        }
-    }
+//    public Connection getConnection() {
+//        try {
+//            return dataSource.getConnection();
+//        } catch (SQLException e) {
+//            System.out.println(e);
+//            return null;
+//        }
+//    }
 
     public void freeConnection(Connection c) {
         try {
@@ -52,4 +53,16 @@ public class ConnectionPool {
             System.out.println(e);
         }
     }
+
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        String dbName = "questionable";
+        String userName = "visesh";
+        String password = "visesh777";
+        String hostname = "awsquestionable.ciureenui07v.us-east-1.rds.amazonaws.com";
+        String port = "3306";
+        String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password=" + password;
+        return DriverManager.getConnection(jdbcUrl);
+    }
+
 }

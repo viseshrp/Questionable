@@ -14,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,15 +23,16 @@ import java.util.Calendar;
  */
 public class UserDB {
 
-        public static int addUser(User user) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+    public static int addUser(User user) throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
-
+Connection connection = null;
         String query
                 = "INSERT INTO user (id, user_name, password, email, type, reg_date) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
+             connection = ConnectionPool.getConnection();
             ps = connection.prepareStatement(query);
             ps.setInt(1, user.getId());
             ps.setString(2, user.getUser_name());
@@ -38,22 +41,30 @@ public class UserDB {
             ps.setString(5, user.getType());
             ps.setString(6, user.getReg_date());
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return 0;
         } finally {
-            DBUtil.closePreparedStatement(ps);
+            try {
+                DBUtil.closePreparedStatement(ps);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
     public static User getUser(String email) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
         String query = "SELECT * FROM user "
                 + "WHERE email = ?";
         try {
+             connection = ConnectionPool.getConnection();
+               System.out.println("connection"+connection);
             ps = connection.prepareStatement(query);
             ps.setString(1, email);
             rs = ps.executeQuery();
@@ -69,24 +80,33 @@ public class UserDB {
                 user.setReg_date(rs.getString("reg_date"));
             }
             return user;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                connection.close();
+                
+                //pool.freeConnection(connection);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
-    
-        public static ArrayList<String> getAdminEmail() throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+
+    public static ArrayList<String> getAdminEmail() throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
         String query = "SELECT email FROM user "
                 + "WHERE type = ?";
         try {
+             connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             ps.setString(1, "admin");
             rs = ps.executeQuery();
@@ -96,24 +116,32 @@ public class UserDB {
                 emails.add(email);
             }
             return emails;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                //pool.freeConnection(connection);
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
-        public static User getUser(int id) throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+    public static User getUser(int id) throws IOException {
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection connection = null;
         String query = "SELECT * FROM user "
                 + "WHERE id = ?";
         try {
+            connection = ConnectionPool.getConnection();
             ps = connection.prepareStatement(query);
             ps.setInt(1, id);
             rs = ps.executeQuery();
@@ -128,25 +156,34 @@ public class UserDB {
                 user.setType(rs.getString("type"));
                 user.setReg_date(rs.getString("reg_date"));
             }
+
             return user;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
+            try {
+                connection.close();
+                
+                //pool.freeConnection(connection);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
     public static ArrayList<User> getUsers() throws IOException {
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
+//        ConnectionPool pool = ConnectionPool.getInstance();
+//        Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        Connection connection = null;
         String query = "SELECT * FROM user";
         try {
+            connection = ConnectionPool.getConnection();
+
             ps = connection.prepareStatement(query);
             rs = ps.executeQuery();
             ArrayList<User> users = new ArrayList<User>();
@@ -162,14 +199,19 @@ public class UserDB {
                 users.add(user);
             }
             return users;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         } finally {
             DBUtil.closeResultSet(rs);
             DBUtil.closePreparedStatement(ps);
-            pool.freeConnection(connection);
-        }
+            //pool.freeConnection(connection);
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
+        }
     }
 }
