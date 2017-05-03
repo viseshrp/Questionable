@@ -44,6 +44,7 @@ public class PostController extends HttpServlet {
         String url = "";
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("theUser");
+        System.out.println("com.questionable.controllers.PostController.doGet() :" + user.getId() + user.getUser_name());
         // get current action
         String action = request.getParameter("action");
         
@@ -251,7 +252,10 @@ public class PostController extends HttpServlet {
                     category.setName(categ);
                     category.setUser(user);
                     CategoryDB.addCategory(category);
+                    System.out.println("userid ;" + user.getId());
                     System.out.println("category created successfully");
+                    System.out.println("cat name : " + category.getName());
+                    System.out.println("cat id : " + CategoryDB.getCategoryByName(category.getName()).getId());
                     category.setId(CategoryDB.getCategoryByName(category.getName()).getId());
                     post.setCategory(category);
                 }

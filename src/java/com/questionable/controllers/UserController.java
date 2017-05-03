@@ -95,9 +95,9 @@ public class UserController extends HttpServlet {
 
             //Validation
             if (username != null && email != null && password != null && confirmPassword != null && password.equals(confirmPassword)) {
-                User userBean = new User();
-                userBean.setUser_name(username);
-                userBean.setEmail(email);
+                User userBeanNew = new User();
+                userBeanNew.setUser_name(username);
+                userBeanNew.setEmail(email);
 
                 //Password salting and hashing
                 try {
@@ -106,18 +106,27 @@ public class UserController extends HttpServlet {
                     Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                userBean.setPassword(password);
-                userBean.setType("user");
+                userBeanNew.setPassword(password);
+                userBeanNew.setType("user");
 
                 Date currDate = new Date();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                 String reg_date = df.format(currDate);
 
-                userBean.setReg_date(reg_date);
+                userBeanNew.setReg_date(reg_date);
 
-                UserDB.addUser(userBean);
+                UserDB.addUser(userBeanNew);
 
-                session.setAttribute("theUser", userBean);
+                User loginUser = UserDB.getUser(userBeanNew.getEmail());
+                if (loginUser != null) {
+                    User userBean = new User(loginUser.getId(),
+                            loginUser.getUser_name(),
+                            loginUser.getPassword(),
+                            loginUser.getEmail(),
+                            loginUser.getType(),
+                            loginUser.getReg_date());
+                    session.setAttribute("theUser", userBean);
+                }
 
                 ArrayList<Post> posts = PostDB.getPostsByStatus("valid");
                 request.setAttribute("posts", posts);
