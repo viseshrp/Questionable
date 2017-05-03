@@ -6,7 +6,7 @@
 package com.questionable.utility;
 
 /**
- *
+ *Util class for password manipulation - hashing and salting
  * @author viseshprasad
  */
 import java.security.MessageDigest;

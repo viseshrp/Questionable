@@ -9,7 +9,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 /**
- *
+ *Mail usage class for mail utility
  * @author viseshprasad
  */
 public class MailUtils {

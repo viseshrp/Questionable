@@ -1,7 +1,9 @@
 package com.questionable.utility;
 
 import java.sql.*;
-
+/*
+Statement manipulation class
+*/
 public class DBUtil {
 
     public static void closeStatement(Statement s) {

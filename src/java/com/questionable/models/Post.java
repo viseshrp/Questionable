@@ -13,20 +13,6 @@ import java.io.Serializable;
  */
 public class Post implements Serializable {
     
-//    id     INT(8) NOT NULL AUTO_INCREMENT,
-//question   VARCHAR(255) NOT NULL,
-//content   text NOT NULL,
-//user_id		INT(8) NOT NULL,
-//category_id INT(8) NOT NULL,
-//created_date  VARCHAR(255) NOT NULL,
-//modified_date  VARCHAR(255) NOT NULL,
-//PRIMARY KEY (id),
-//CONSTRAINT fk_user_post FOREIGN KEY (user_id)
-//  REFERENCES user(id)
-//  ON DELETE CASCADE
-//  ON UPDATE CASCADE,
-//  CONSTRAINT fk_category_post FOREIGN KEY (category_id)
-//  REFERENCES category(id)
     
     private int id;
     private String question;

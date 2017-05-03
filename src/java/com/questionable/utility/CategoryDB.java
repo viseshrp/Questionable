@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ *Util to manipulate "category" database.
  * @author viseshprasad
  */
 public class CategoryDB {

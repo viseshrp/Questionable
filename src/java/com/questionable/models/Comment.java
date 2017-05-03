@@ -12,24 +12,7 @@ import java.io.Serializable;
  * @author viseshprasad
  */
 public class Comment implements Serializable {
-    
-  /*  id     INT(8) NOT NULL AUTO_INCREMENT,
-content   text NOT NULL,
-user_id		INT(8) NOT NULL,
-post_id INT(8) NOT NULL,
-created_date  VARCHAR(255) NOT NULL,
-modified_date  VARCHAR(255) NOT NULL,
-PRIMARY KEY (id),
-CONSTRAINT fk_user_comment FOREIGN KEY (user_id)
-  REFERENCES user(id)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE,
-  CONSTRAINT fk_post_comment FOREIGN KEY (post_id)
-  REFERENCES post(id)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE
-*/
-    
+        
     private int id;
     private String content;
     private String created_date;

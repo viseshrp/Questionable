@@ -13,17 +13,6 @@ import java.io.Serializable;
  */
 public class Category implements Serializable {
     
-//CREATE TABLE category (
-//id     INT(8) NOT NULL AUTO_INCREMENT,
-//name   VARCHAR(30) NOT NULL,
-//user_id     INT(8) NOT NULL,
-//PRIMARY KEY (id),
-//CONSTRAINT fk_user FOREIGN KEY (user_id)
-//  REFERENCES user(id)
-//  ON DELETE CASCADE
-//  ON UPDATE CASCADE
-//) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
     private int id;
     private String name;
     

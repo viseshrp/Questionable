@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ *Util to manipulate "post" database.
  * @author viseshprasad
  */
 public class PostDB {

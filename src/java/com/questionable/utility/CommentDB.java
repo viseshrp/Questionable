@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ *Util to manipulate "comment" database.
  * @author viseshprasad
  */
 public class CommentDB {
